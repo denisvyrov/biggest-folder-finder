@@ -3,9 +3,9 @@ import java.util.HashMap;
 import java.util.concurrent.ForkJoinPool;
 
 public class Main {
+    private static char[] sizeMultipliers = {'B', 'K', 'M', 'G', 'T'};
+
     public static void main(String[] args) {
-        System.out.println(getSizeFromHumanReadable("235K"));
-        System.exit(0);
         String folderPath = "H:/PrivateMediaArchive";
         File file = new File(folderPath);
 
@@ -19,31 +19,26 @@ public class Main {
     }
 
     public static String getHumanReadableSize(long size) {
-        int index = -1;
-        char[] chars = {'K', 'M', 'G', 'T'};
-        if (size < 1024) {
-            return size + "B";
+        for (int i = 0; i < sizeMultipliers.length; i++) {
+            double number = size / Math.pow(1024, i);
+            if (number < 1024) {
+                return Math.round(number) + "" + sizeMultipliers[i] + (i > 0 ? "b" : "");
+            }
         }
-        double number = size;
-        while (number >= 1024) {
-            number /= 1024;
-            index++;
-        }
-        return String.format("%d%s", Math.round(number), chars[index] + "b");
+        return "";
     }
 
     public static long getSizeFromHumanReadable(String size) {
-        HashMap<Character, Integer> char2multiplier = getMultipliers();
+        HashMap<Character, Integer> char2multiplier = getSizeMultipliers();
         char sizeFactor = size.replaceAll("[0-9\\s+]+", "").charAt(0);
         int multiplier = char2multiplier.get(sizeFactor);
         return multiplier * Long.parseLong(size.replaceAll("[^0-9]", ""));
     }
 
-    public static HashMap<Character, Integer> getMultipliers() {
-        char[] multipliers = {'B', 'K', 'M', 'G', 'T'};
+    public static HashMap<Character, Integer> getSizeMultipliers() {
         HashMap<Character, Integer> char2Multiplier = new HashMap<>();
-        for (int i = 0; i < multipliers.length; i++) {
-            char2Multiplier.put(multipliers[i], (int) Math.pow(1024, i));
+        for (int i = 0; i < sizeMultipliers.length; i++) {
+            char2Multiplier.put(sizeMultipliers[i], (int) Math.pow(1024, i));
         }
         return char2Multiplier;
     }
