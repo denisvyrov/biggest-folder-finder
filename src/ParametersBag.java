@@ -4,7 +4,7 @@ public class ParametersBag {
     private long limit;
     private String path;
 
-    public ParametersBag(String args[]) {
+    public ParametersBag(String[] args) {
         if (args.length != 4) {
             throw new IllegalArgumentException("Укажите два параметра: -l (лимит по объему) и -d (путь к папке)");
         }
